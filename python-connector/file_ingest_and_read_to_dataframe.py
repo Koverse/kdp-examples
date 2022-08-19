@@ -35,7 +35,7 @@ starting_record_id = os.environ.get('STARTING_RECORD_ID', default='')
 path_to_ca_file = os.environ.get('PATH_TO_CA_FILE', default='')
 
 # csv file location
-input_file = os.environ.get('INPUT_FILE', default='../datafiles/actorfilms.csv')
+input_file = os.environ.get('INPUT_FILE', default='./resources/actorfilms.csv')
 
 #################################################################
 
