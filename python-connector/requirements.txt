@@ -1,2 +1,2 @@
-kdp-python-connector == 0.19.0
+kdp-python-connector == 0.20.0
 
