@@ -26,4 +26,4 @@ This example, in Java, covers the main functionality of the KDP Spark Connector.
 
 You will first need to add a dataset to your workspace. Go into the src/main/resources directory and upload the file kdp-count-records.json. This will be the datasetId you will start with. You will need to update the variables for workspaceId, datasetId, datasetName to run this example.
 
-Please see [KdpCount.java](spark-connector/kdp-spark-count-example/src/main/java/com/koverse/spark/KdpCount.java) for a walk through of the code.
+Please see [KdpCount.java](kdp-spark-count-example/src/main/java/com/koverse/spark/KdpCount.java) for a walk through of the code.
