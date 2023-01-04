@@ -1,8 +1,6 @@
-# kdp-examples
+## Python Connector Examples
 
-### Python Connector Examples
-
-## Prequisites
+### Prequisites
 * Python version 3.8.5
 * Install dependencies from python-connector directory with:
 ```
