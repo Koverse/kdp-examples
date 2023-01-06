@@ -19,7 +19,7 @@
     <dependency>
       <groupId>com.koverse</groupId>
       <artifactId>kdp-spark-connector_2.12</artifactId>
-      <version>4.0.2</version>
+      <version>4.0.3</version>
     </dependency>
     <dependency> <!-- Spark dependency -->
       <groupId>org.apache.spark</groupId>
