@@ -1,6 +1,6 @@
 ## Python Connector Examples
 
-### Prequisites
+### Prerequisites
 * Python version 3.8.5
 * Install dependencies from python-connector directory with:
 ```
