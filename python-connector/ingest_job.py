@@ -36,7 +36,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 job_id = kdp_conn.create_url_ingest_job(workspace_id=workspace_id, dataset_id=dataset_id, url_list=url_list, jwt=jwt)
 

@@ -45,7 +45,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 # ingest data
 partitions_set = kdp_conn.batch_write(df, dataset_id, jwt, batch_size)

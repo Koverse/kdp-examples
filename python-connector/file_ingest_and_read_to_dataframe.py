@@ -22,7 +22,7 @@ password = os.environ.get('PASSWORD')
 workspace_id = os.environ.get('WORKSPACE_ID')
 
 # host url to KDP platform
-kdp_url = os.environ.get('KDP_URL', default='https://api.app.koverse.com')
+kdp_url = os.environ.get('KDP_URL', default='https://api.koverse.localhost')
 
 # OPTIONAL: number of records to read per batch when writing to dataframe, default:1000;
 batch_size = os.environ.get('BATCH_SIZE', default=100000)
@@ -60,7 +60,9 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+print(authentication_details.access_token)
+
+jwt = authentication_details.access_token
 
 # Get workspace
 workspace = kdp_conn.get_workspace(workspace_id, jwt)

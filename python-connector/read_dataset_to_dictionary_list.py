@@ -43,7 +43,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 dictionary_list = kdp_conn.read_dataset_to_dictionary_list(dataset_id=dataset_id,
                                                            jwt=jwt,

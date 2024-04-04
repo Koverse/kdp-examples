@@ -44,7 +44,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset_id,
                                                       jwt=jwt,
