@@ -5,7 +5,7 @@ from kdp_connector import KdpConn
 # from Pandas dataframe sourced from a csv file.
 
 
-########## variables ##########
+# ######### variables ##########
 # authentication code
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')

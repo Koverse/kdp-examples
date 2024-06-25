@@ -60,7 +60,7 @@ authentication_details = kdp_conn.create_keycloak_authentication_token(username=
                                                                        host=keycloak_host,
                                                                        verify_ssl=False)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset_id,

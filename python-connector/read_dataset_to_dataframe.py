@@ -9,7 +9,7 @@ from kdp_connector import KdpConn
 # This example shows you how to use the KDP Python Connector to read data from KDP dataset into
 # a Pandas Dataframe.
 
-########## variables ##########
+# ######### variables ##########
 # authentication code
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')
@@ -44,7 +44,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset_id,
                                                       jwt=jwt,

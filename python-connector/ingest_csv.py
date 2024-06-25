@@ -9,7 +9,7 @@ from kdp_connector import KdpConn
 # from Pandas dataframe sourced from a csv file.
 
 
-########## variables ##########
+# ######### variables ##########
 # authentication code
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')
@@ -45,7 +45,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 # ingest data
 partitions_set = kdp_conn.batch_write(df, dataset_id, jwt, batch_size)

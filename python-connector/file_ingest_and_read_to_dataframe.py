@@ -12,9 +12,9 @@ from kdp_connector import KdpConn
 # Also shows how to read the data back from the KDP platform into a dataframe.
 
 # Only authentication details (username and password) are required for this example
-########### variables ###########################################
-########## variables ##########
+# ########## variables ###########################################
 # authentication code
+
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')
 
@@ -39,8 +39,8 @@ input_file = os.environ.get('INPUT_FILE', default='./resources/actorfilms.csv')
 
 #################################################################
 
-# dataset id: This test creates a new dataset instead of using DATASET_ID
-dataset_id = ''
+# dataset id: This test creates a new dataset, unless a dataset_id is provided
+dataset_id = os.environ.get('DATASET_ID', '')
 
 dataset_name = 'Actors in Films'
 
@@ -60,7 +60,7 @@ authentication_details = kdp_conn.create_authentication_token(email=email,
                                                               password=password,
                                                               workspace_id=workspace_id)
 
-jwt = authentication_details.get("access_token")
+jwt = authentication_details.access_token
 
 # Get workspace
 workspace = kdp_conn.get_workspace(workspace_id, jwt)
