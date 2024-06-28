@@ -8,6 +8,26 @@ cd python-connector
 pip3 install -r requirements.txt
 ```
 
+### Use .env file to source and export environment variables
+An .env file can be used to set the environment variables. The .env file should be in the following format:
+```
+EMAIL=<KDP user's email address>
+PASSWORD=<KDP user's password>
+WORKSPACE_ID=<KDP user's workspace id>
+DATASET_ID=<KDP user's dataset id>
+KDP_URL=<KDP url to connect to, default is https://api.app.koverse.com>
+PATH_TO_CSV_FILE=<location to the csv file to be ingested, default=['https://kdp4.s3-us-east-2.amazonaws.com/test-data/cars.csv']>
+STARTING_RECORD_ID=<Record to start reading, default=''>
+PATH_TO_CA_FILE=<When not provided will not verify ssl of request, default=''>
+INPUT_FILE=<File with data to ingest, default='../datafiles/actorfilms.csv'>
+BATCH_SIZE=<number of records in a batch, default=100000>
+```
+
+To source the .env file and export the environment variables, run the following command:
+```
+export $(grep -v '^#' .env | xargs)
+```
+
 **Step 1**
 
 Set System Variables to provide the values for the variables listed below:
