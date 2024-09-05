@@ -5,7 +5,13 @@ from pprint import pprint
 
 from timeit import default_timer as timer
 
+import time
+
+from kdp_api.exceptions import BadRequestException
 from kdp_api.models import SecurityLabelInfoParams
+import kdp_api
+from kdp_api import Query
+from kdp_api.api import read_and_query_api
 
 from kdp_connector import KdpConn
 
@@ -112,3 +118,53 @@ print('Created pandas dataframe with', dataframe.size, 'elements (number of colu
 
 if dataframe.size < 10000:
     pprint(dataframe)
+
+# Query methods
+def post_sql_query(dataset_id: str, expression: str, limit: int = 5, offset: int = 0):
+    """This method will be used to query data in KDP datasets using the lucene syntax
+
+        :param Configuration config: Connection configuration
+        :param str dataset_id: ID of the KDP dataset where the data will queried
+        :param str expression: Lucene style query expression ex. name: John
+
+        :returns: Records matching query expression
+
+        :rtype: RecordBatch
+    """
+    config = kdp_conn.create_configuration(jwt)
+    with kdp_api.ApiClient(config) as api_client:
+        api_instance = read_and_query_api.ReadAndQueryApi(api_client)
+
+        query = Query(datasetId=dataset_id, expression=expression, limit=limit, offset=offset)
+
+        return api_instance.post_query(query=query)
+
+
+def sql_query_for_result() -> None:
+    try:
+        expression = "SELECT * from \"%s\" where \"ActorID\"='nm0000001'" % dataset.id
+        #  Lucene query for the dataset
+        query_result = post_sql_query(dataset_id=dataset.id, expression=expression, limit=100, offset=0)
+        pprint(query_result)
+
+    except BadRequestException as e:
+        pprint("Exception encountered")
+    return
+
+
+def lucene_query_for_result() -> None:
+    try:
+        #  Lucene query for the dataset
+        query_result = kdp_conn.post_lucene_query(dataset_id=dataset.id, jwt=jwt, expression='nm0000001', limit=100, offset=0)
+        pprint(query_result)
+
+    except BadRequestException as e:
+        pprint("Exception encountered")
+    return
+
+pprint("Waiting 40 seconds for the indexes to be added to the database before querying")
+time.sleep(40)
+lucene_query_for_result()
+
+pprint("Attempting sql query")
+sql_query_for_result()
