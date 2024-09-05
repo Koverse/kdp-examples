@@ -19,6 +19,8 @@ from kdp_connector import KdpConn
 # with ABAC using the batch_write_v2 method
 # and read the data back from the KDP platform into a dataframe.
 
+# It then also provides examples of lucene query and sql query methods to query the dataset.
+
 # Only authentication details (username and password) are required for this example
 # ########## variables ###########################################
 # authentication code
