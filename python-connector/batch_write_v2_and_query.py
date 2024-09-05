@@ -143,7 +143,7 @@ def post_sql_query(dataset_id: str, expression: str, limit: int = 5, offset: int
 def sql_query_for_result() -> None:
     try:
         expression = "SELECT * from \"%s\" where \"ActorID\"='nm0000001'" % dataset.id
-        #  Lucene query for the dataset
+        #  Lucene query for the dataset -- NOTE: User must have attributes assigned to see the data
         query_result = post_sql_query(dataset_id=dataset.id, expression=expression, limit=100, offset=0)
         pprint(query_result)
 
@@ -154,7 +154,7 @@ def sql_query_for_result() -> None:
 
 def lucene_query_for_result() -> None:
     try:
-        #  Lucene query for the dataset
+        #  Lucene query for the dataset - NOTE: User must have attributes assigned to see the data
         query_result = kdp_conn.post_lucene_query(dataset_id=dataset.id, jwt=jwt, expression='nm0000001', limit=100, offset=0)
         pprint(query_result)
 
