@@ -92,7 +92,7 @@ security_label_info_params: SecurityLabelInfoParams = SecurityLabelInfoParams(
     replacementString=""
 )
 
-# # Swap out the above security_label_info_params with the following to apply a custom label to all records
+# Swap out the above security_label_info_params with the following to apply a custom label to all records
 # security_label_info_params = SecurityLabelInfoParams(
 #     label="custom_attribute",
 #     parser_class_name="apply-label-to-all-records-parser"
