@@ -122,37 +122,29 @@ if dataframe.size < 10000:
     pprint(dataframe)
 
 # Query methods
-def post_sql_query(dataset_id: str, expression: str, limit: int = 5, offset: int = 0):
-    """This method will be used to query data in KDP datasets using the lucene syntax
-
-        :param Configuration config: Connection configuration
-        :param str dataset_id: ID of the KDP dataset where the data will queried
-        :param str expression: Lucene style query expression ex. name: John
-
-        :returns: Records matching query expression
-
-        :rtype: RecordBatch
-    """
-    config = kdp_conn.create_configuration(jwt)
-    with kdp_api.ApiClient(config) as api_client:
-        api_instance = read_and_query_api.ReadAndQueryApi(api_client)
-
-        query = Query(datasetId=dataset_id, expression=expression, limit=limit, offset=offset)
-
-        return api_instance.post_query(query=query)
-
-
 def sql_query_for_result() -> None:
     try:
         expression = "SELECT * from \"%s\" where \"ActorID\"='nm0000001'" % dataset.id
-        #  Lucene query for the dataset -- NOTE: User must have attributes assigned to see the data
-        query_result = post_sql_query(dataset_id=dataset.id, expression=expression, limit=100, offset=0)
-        pprint(query_result)
-
+        #  SQL query for the dataset, includeInternalFields = true so _koverse_record_id is returned for each record
+        #  -- NOTE: User must have attributes assigned to see the data
+        record_batch = kdp_conn.post_sql_query(dataset_id=dataset.id, jwt=jwt, expression=expression, limit=1000, offset=0, include_internal_fields=True)
     except BadRequestException as e:
-        pprint("Exception encountered")
-    return
+        pprint(f"Exception encountered: {e}")
+        pprint(f"Exception details: {e.body}")
+    return record_batch
 
+def update_records(records):
+    print("records size: ", len(records))
+    # Update the records
+    for record in records:
+        record['updated'] = True
+    # Convert the updated records back to a DataFrame
+    updated_df = pd.DataFrame(records)
+
+    # Update the dataset with the updated records
+    partitions_set = kdp_conn.update(updated_df, dataset.id, jwt, security_label_info_params, ingest_batch_size)
+    pprint('File ingest completed with partitions: %s' % partitions_set)
+    return records
 
 def lucene_query_for_result() -> None:
     try:
@@ -169,4 +161,8 @@ time.sleep(40)
 lucene_query_for_result()
 
 pprint("Attempting sql query")
-sql_query_for_result()
+record_batch = sql_query_for_result()
+
+pprint("Attempting to update records")
+update_records(record_batch.records)
+
