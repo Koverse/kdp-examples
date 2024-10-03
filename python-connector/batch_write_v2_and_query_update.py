@@ -25,8 +25,8 @@ from kdp_connector import KdpConn
 # ########## variables ###########################################
 # authentication code
 
-email = os.environ.get('EMAIL')
-password = os.environ.get('PASSWORD')
+email = os.environ.get('EMAIL', default=None)
+password = os.environ.get('PASSWORD', default=None)
 
 # Or as an alternative, you can use an API key (email and password not required if an api-key is provided)
 api_key = os.environ.get('API_KEY', default=None)
@@ -67,7 +67,7 @@ read_batch_size = 100000
 df = pd.read_csv(input_file)
 
 # Construct kdpConnector
-kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True)
+kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True, api_key=api_key)
 
 if (email is not None) and (password is not None):
     authentication_details = kdp_conn.create_and_set_authentication_token(email=email,

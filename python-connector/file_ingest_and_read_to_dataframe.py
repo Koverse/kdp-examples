@@ -14,7 +14,6 @@ from kdp_connector import KdpConn
 # Only authentication details (username and password) are required for this example
 # ########## variables ###########################################
 # authentication code
-
 email = os.environ.get('EMAIL', default=None)
 password = os.environ.get('PASSWORD', default=None)
 
