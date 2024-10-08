@@ -14,9 +14,11 @@ from kdp_connector import KdpConn
 # Only authentication details (username and password) are required for this example
 # ########## variables ###########################################
 # authentication code
+email = os.environ.get('EMAIL', default=None)
+password = os.environ.get('PASSWORD', default=None)
 
-email = os.environ.get('EMAIL')
-password = os.environ.get('PASSWORD')
+# Or as an alternative, you can use an API key (email and password not required if an api-key is provided)
+api_key = os.environ.get('API_KEY', default=None)
 
 # workspace id
 workspace_id = os.environ.get('WORKSPACE_ID')
@@ -54,28 +56,27 @@ read_batch_size = 100000
 df = pd.read_csv(input_file)
 
 # Construct kdpConnector
-kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True)
+kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True, api_key=api_key)
 
-authentication_details = kdp_conn.create_authentication_token(email=email,
-                                                              password=password,
-                                                              workspace_id=workspace_id)
-
-jwt = authentication_details.access_token
+if (email is not None) and (password is not None):
+    authentication_details = kdp_conn.create_and_set_authentication_token(email=email,
+                                                                          password=password,
+                                                                          workspace_id=workspace_id)
 
 # Get workspace
-workspace = kdp_conn.get_workspace(workspace_id, jwt)
+workspace = kdp_conn.get_workspace(workspace_id=workspace_id)
 pprint("Retrieved workspace by id: %s" % workspace.id)
 
 # Get or Create Dataset
 if dataset_id != '':
-    dataset = kdp_conn.get_dataset(dataset_id, jwt)
+    dataset = kdp_conn.get_dataset(dataset_id=dataset_id)
     pprint("Retrieved dataset by id %s" % dataset.id)
 else:
-    dataset = kdp_conn.create_dataset(name=dataset_name, workspace_id=workspace.id, jwt=jwt)
+    dataset = kdp_conn.create_dataset(name=dataset_name, workspace_id=workspace.id)
     pprint("Created dataset with name: %s and dataset.id: %s" % (dataset_name, dataset.id))
 
 # ingest data
-partitions_set = kdp_conn.batch_write(df, dataset.id, jwt, ingest_batch_size)
+partitions_set = kdp_conn.batch_write(dataframe=df, dataset_id=dataset.id, batch_size=ingest_batch_size)
 
 pprint('File ingest completed with partitions: %s' % partitions_set)
 
@@ -84,7 +85,6 @@ start = timer()
 starting_record_id = ''
 
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset.id,
-                                                      jwt=jwt,
                                                       starting_record_id=starting_record_id,
                                                       batch_size=read_batch_size)
 

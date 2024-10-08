@@ -11,8 +11,11 @@ from kdp_connector import KdpConn
 
 # ######### variables ##########
 # authentication code
-email = os.environ.get('EMAIL')
-password = os.environ.get('PASSWORD')
+email = os.environ.get('EMAIL', default=None)
+password = os.environ.get('PASSWORD', default=None)
+
+# Or as an alternative, you can use an API key (email and password not required if an api-key is provided)
+api_key = os.environ.get('API_KEY', default=None)
 
 # workspace id
 workspace_id = os.environ.get('WORKSPACE_ID')
@@ -38,16 +41,16 @@ path_to_ca_file = os.environ.get('PATH_TO_CA_FILE', default='')
 
 start = timer()
 
-kdp_conn = KdpConn(path_to_ca_file, kdp_url)
+# Construct kdpConnector
+kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True, api_key=api_key)
 
-authentication_details = kdp_conn.create_authentication_token(email=email,
-                                                              password=password,
-                                                              workspace_id=workspace_id)
+if (email is not None) and (password is not None):
+    authentication_details = kdp_conn.create_and_set_authentication_token(email=email,
+                                                                          password=password,
+                                                                          workspace_id=workspace_id)
 
-jwt = authentication_details.access_token
 
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset_id,
-                                                      jwt=jwt,
                                                       starting_record_id=starting_record_id,
                                                       batch_size=batch_size)
 

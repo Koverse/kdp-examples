@@ -25,8 +25,11 @@ from kdp_connector import KdpConn
 # ########## variables ###########################################
 # authentication code
 
-email = os.environ.get('EMAIL')
-password = os.environ.get('PASSWORD')
+email = os.environ.get('EMAIL', default=None)
+password = os.environ.get('PASSWORD', default=None)
+
+# Or as an alternative, you can use an API key (email and password not required if an api-key is provided)
+api_key = os.environ.get('API_KEY', default=None)
 
 # workspace id
 workspace_id = os.environ.get('WORKSPACE_ID')
@@ -64,24 +67,23 @@ read_batch_size = 100000
 df = pd.read_csv(input_file)
 
 # Construct kdpConnector
-kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True)
+kdp_conn = KdpConn(path_to_ca_file, kdp_url, discard_unknown_keys=True, api_key=api_key)
 
-authentication_details = kdp_conn.create_authentication_token(email=email,
-                                                              password=password,
-                                                              workspace_id=workspace_id)
-
-jwt = authentication_details.access_token
+if (email is not None) and (password is not None):
+    authentication_details = kdp_conn.create_and_set_authentication_token(email=email,
+                                                                          password=password,
+                                                                          workspace_id=workspace_id)
 
 # Get workspace
-workspace = kdp_conn.get_workspace(workspace_id, jwt)
+workspace = kdp_conn.get_workspace(workspace_id=workspace_id)
 pprint("Retrieved workspace by id: %s" % workspace.id)
 
 # Get or Create Dataset
 if dataset_id != '':
-    dataset = kdp_conn.get_dataset(dataset_id, jwt)
+    dataset = kdp_conn.get_dataset(dataset_id=dataset_id)
     pprint("Retrieved dataset by id %s" % dataset.id)
 else:
-    dataset = kdp_conn.create_dataset(name=dataset_name, workspace_id=workspace.id, jwt=jwt)
+    dataset = kdp_conn.create_dataset(name=dataset_name, workspace_id=workspace.id)
     pprint("Created dataset with name: %s and dataset.id: %s" % (dataset_name, dataset.id))
 
 # Create Security Label Info Params for security label with one field in data
@@ -100,7 +102,7 @@ security_label_info_params: SecurityLabelInfoParams = SecurityLabelInfoParams(
 
 
 # ingest data
-partitions_set = kdp_conn.batch_write_v2(df, dataset.id, jwt, security_label_info_params, ingest_batch_size)
+partitions_set = kdp_conn.batch_write_v2(dataframe=df, dataset_id=dataset.id, security_label_info_params=security_label_info_params, batch_size=ingest_batch_size)
 
 pprint('File ingest completed with partitions: %s' % partitions_set)
 
@@ -109,7 +111,6 @@ start = timer()
 starting_record_id = ''
 
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset.id,
-                                                      jwt=jwt,
                                                       starting_record_id=starting_record_id,
                                                       batch_size=read_batch_size)
 
@@ -127,7 +128,7 @@ def sql_query_for_result() -> None:
         expression = "SELECT * from \"%s\" where \"ActorID\"='nm0000001'" % dataset.id
         #  SQL query for the dataset, includeInternalFields = true so _koverse_record_id is returned for each record
         #  -- NOTE: User must have attributes assigned to see the data
-        record_batch = kdp_conn.post_sql_query(dataset_id=dataset.id, jwt=jwt, expression=expression, limit=1000, offset=0, include_internal_fields=True)
+        record_batch = kdp_conn.post_sql_query(dataset_id=dataset.id, expression=expression, limit=1000, offset=0, include_internal_fields=True)
     except BadRequestException as e:
         pprint(f"Exception encountered: {e}")
         pprint(f"Exception details: {e.body}")
@@ -142,14 +143,14 @@ def update_records(records):
     updated_df = pd.DataFrame(records)
 
     # Update the dataset with the updated records
-    partitions_set = kdp_conn.update(updated_df, dataset.id, jwt, security_label_info_params, ingest_batch_size)
+    partitions_set = kdp_conn.update(dataframe=updated_df, dataset_id=dataset.id, security_label_info_params=security_label_info_params, batch_size=ingest_batch_size)
     pprint('File ingest completed with partitions: %s' % partitions_set)
     return records
 
 def lucene_query_for_result() -> None:
     try:
         #  Lucene query for the dataset - NOTE: User must have attributes assigned to see the data
-        query_result = kdp_conn.post_lucene_query(dataset_id=dataset.id, jwt=jwt, expression='nm0000001', limit=100, offset=0)
+        query_result = kdp_conn.post_lucene_query(dataset_id=dataset.id, expression='nm0000001', limit=100, offset=0)
         pprint(query_result)
 
     except BadRequestException as e:

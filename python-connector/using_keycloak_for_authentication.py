@@ -51,7 +51,7 @@ start = timer()
 
 kdp_conn = KdpConn(path_to_ca_file, kdp_url)
 
-authentication_details = kdp_conn.create_keycloak_authentication_token(username=keycloak_username,
+kdp_conn.create_and_set_keycloak_authentication_token(username=keycloak_username,
                                                                        realm=keycloak_realm,
                                                                        client_id=keycloak_client_id,
                                                                        client_secret=keycloak_client_secret,
@@ -60,11 +60,7 @@ authentication_details = kdp_conn.create_keycloak_authentication_token(username=
                                                                        host=keycloak_host,
                                                                        verify_ssl=False)
 
-jwt = authentication_details.access_token
-
-
 dataframe = kdp_conn.read_dataset_to_pandas_dataframe(dataset_id=dataset_id,
-                                                      jwt=jwt,
                                                       starting_record_id=starting_record_id,
                                                       batch_size=batch_size)
 
