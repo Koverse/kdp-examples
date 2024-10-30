@@ -1,18 +1,11 @@
 import os
-import pandas as pd
-
+import time
 from pprint import pprint
-
 from timeit import default_timer as timer
 
-import time
-
+import pandas as pd
 from kdp_api.exceptions import BadRequestException
 from kdp_api.models import SecurityLabelInfoParams
-import kdp_api
-from kdp_api import Query
-from kdp_api.api import read_and_query_api
-
 from kdp_connector import KdpConn
 
 # This example shows you how to use the KDP Python Connector to write data into KDP platform
@@ -125,7 +118,7 @@ if dataframe.size < 10000:
 # Query methods
 def sql_query_for_result() -> None:
     try:
-        expression = "SELECT * from \"%s\" where \"ActorID\"='nm0000001'" % dataset.id
+        expression = f"""SELECT * from "{dataset.id}" where "ActorID"='nm0000001'"""
         #  SQL query for the dataset, includeInternalFields = true so _koverse_record_id is returned for each record
         #  -- NOTE: User must have attributes assigned to see the data
         record_batch = kdp_conn.post_sql_query(dataset_id=dataset.id, expression=expression, limit=1000, offset=0, include_internal_fields=True)
